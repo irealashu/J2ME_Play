@@ -338,6 +338,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
 			//noinspection ResultOfMethodCallIgnored
 			dir.mkdirs();
 		}
+		FileUtils.ensureShaders(this, new File(workDir));
 		ArrayList<ShaderInfo> infos = new ArrayList<>();
 		spShaderAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, infos);
 		spShaderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -563,6 +564,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
 		binding.scaleTypeSelector.setSelection(params.screenScaleType);
 		binding.screenGravitySelector.setSelection(params.screenGravity);
 		binding.filteringToggle.setChecked(params.screenFilter);
+		binding.frameBlendingSelector.setSelection(Math.max(0, Math.min(3, params.frameBlending)));
 		binding.immediateProcessingToggle.setChecked(params.immediateMode);
 		binding.parallelScreenRedrawingToggle.setChecked(params.parallelRedrawScreen);
 		binding.forceFullscreenToggle.setChecked(params.forceFullscreen);
@@ -631,6 +633,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
 			params.screenGravity = binding.screenGravitySelector.getSelectedItemPosition();
 			params.screenScaleType = binding.scaleTypeSelector.getSelectedItemPosition();
 			params.screenFilter = binding.filteringToggle.isChecked();
+			params.frameBlending = binding.frameBlendingSelector.getSelectedItemPosition();
 			params.immediateMode = binding.immediateProcessingToggle.isChecked();
 			int mode = binding.graphicalModeSelector.getSelectedItemPosition();
 			params.graphicsMode = mode;

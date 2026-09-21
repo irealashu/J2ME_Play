@@ -20,6 +20,7 @@ package javax.microedition.lcdui;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 import java.io.IOException;
@@ -132,12 +133,20 @@ public class Image {
 	}
 
 	void copyTo(Image dst) {
-		dst.getSingleGraphics().getCanvas().drawBitmap(bitmap, bounds, bounds, null);
+		copyTo(dst, (Paint) null);
+	}
+
+	void copyTo(Image dst, Paint paint) {
+		dst.getSingleGraphics().getCanvas().drawBitmap(bitmap, bounds, bounds, paint);
 	}
 
 	void copyTo(Image dst, int x, int y) {
+		copyTo(dst, x, y, null);
+	}
+
+	void copyTo(Image dst, int x, int y, Paint paint) {
 		Rect r = new Rect(x, y, x + bounds.right, y + bounds.bottom);
-		dst.getSingleGraphics().getCanvas().drawBitmap(bitmap, bounds, r, null);
+		dst.getSingleGraphics().getCanvas().drawBitmap(bitmap, bounds, r, paint);
 	}
 
 	public Graphics getSingleGraphics() {

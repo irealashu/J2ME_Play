@@ -75,7 +75,7 @@ public class EmulatorApplication extends Application {
 						.withEnabled(true)
 						.build()
 				));
-		boolean enabled = isSignatureValid() && !BuildConfig.FLAVOR.equals("dev");
+		boolean enabled = isSignatureValid() && !BuildConfig.DEBUG;
 		ACRA.getErrorReporter().setEnabled(enabled);
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		sp.registerOnSharedPreferenceChangeListener(themeListener);

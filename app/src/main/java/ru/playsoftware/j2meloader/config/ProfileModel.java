@@ -68,6 +68,9 @@ public class ProfileModel {
 	@SerializedName("ScreenFilter")
 	public boolean screenFilter;
 
+	@SerializedName("FrameBlending")
+	public int frameBlending;
+
 	@SerializedName("ImmediateMode")
 	public boolean immediateMode;
 

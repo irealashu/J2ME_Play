@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#525AA0</color>
-    <color name="fab_material_red_500">#f44336</color>
-    <color name="file_picker_accent">#ffb62e</color>
+    <color name="ic_launcher_background">#000000</color>
+    <color name="fab_material_red_500">#FFD600</color>
+    <color name="file_picker_accent">#FFD600</color>
 
-    <!--light theme colors-->
-    <color name="primary">#212121</color>
-    <color name="primary_dark">#1c1c1c</color>
-    <color name="accent">#ff2e51</color>
-    <color name="background">#fafafa</color>
-    <color name="text_primary">#000000</color>
-    <color name="text_secondary">#353535</color>
-    <color name="btn_bg_normal">#2e2e2e</color>
-    <color name="btn_bg_pressed">#707070</color>
-    <color name="config_card">#ffffff</color>
+    <!-- Black theme with yellow accent and headers -->
+    <color name="primary">#FFD600</color>
+    <color name="primary_dark">#000000</color>
+    <color name="accent">#FFD600</color>
+    <color name="background">#000000</color>
+    <color name="surface">#121212</color>
+    <color name="card_bg">#141414</color>
+    <color name="card_stroke">#282828</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#9E9E9E</color>
+    <color name="btn_bg_normal">#FFD600</color>
+    <color name="btn_bg_pressed">#FFC400</color>
+    <color name="btn_text">#000000</color>
+    <color name="config_card">#141414</color>
+    <color name="chip_bg">#292400</color>
+    <color name="chip_text">#FFD600</color>
+    <color name="play_btn_bg">#FFD600</color>
+    <color name="play_btn_ripple">#FFAB00</color>
+    <color name="header_yellow">#FFD600</color>
 
-    <color name="nnf_separator_color">@color/nnf_light_separator_color</color>
+    <color name="nnf_separator_color">#282828</color>
 </resources>

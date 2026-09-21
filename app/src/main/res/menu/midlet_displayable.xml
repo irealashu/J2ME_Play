@@ -22,8 +22,28 @@
             android:title="@string/take_screenshot" />
 
         <item
+            android:id="@+id/action_quick_capture_toggle"
+            android:title="@string/quick_screenshot_toggle"
+            android:checkable="true"
+            android:checked="false" />
+
+        <item
+            android:id="@+id/action_tilt_controls"
+            android:title="@string/action_tilt_controls"
+            android:checkable="true"
+            android:checked="false" />
+
+        <item
+            android:id="@+id/action_tilt_calibrate"
+            android:title="@string/action_tilt_calibrate" />
+
+        <item
             android:id="@+id/action_limit_fps"
             android:title="@string/PREF_LIMIT_FPS" />
+
+        <item
+            android:id="@+id/action_motion_smoothing"
+            android:title="@string/action_motion_smoothing" />
 
         <item
             android:id="@+id/action_submenu_vk"

@@ -67,21 +67,25 @@ public class Config {
 
 	static {
 		Context context = ContextHolder.getAppContext();
-		String appName = "J2ME-Loader";
-		if (!BuildConfig.FULL_EMULATOR) {
-			appName = context.getString(R.string.app_name);
+		if (context != null) {
+			String appName = "J2ME-Loader";
+			if (!BuildConfig.FULL_EMULATOR) {
+				appName = context.getString(R.string.app_name);
+			}
+			SCREENSHOTS_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+					+ "/" + appName;
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+			String path = FileUtils.isExternalStorageLegacy() ?
+					preferences.getString(PREF_EMULATOR_DIR, null) :
+					context.getExternalFilesDir(null).getPath();
+			if (path == null) {
+				path = Environment.getExternalStorageDirectory() + "/" + appName;
+			}
+			initDirs(path);
+			preferences.registerOnSharedPreferenceChangeListener(sPrefListener);
+		} else {
+			SCREENSHOTS_DIR = "/sdcard/Pictures/J2ME-Play";
 		}
-		SCREENSHOTS_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-				+ "/" + appName;
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String path = FileUtils.isExternalStorageLegacy() ?
-				preferences.getString(PREF_EMULATOR_DIR, null) :
-				context.getExternalFilesDir(null).getPath();
-		if (path == null) {
-			path = Environment.getExternalStorageDirectory() + "/" + appName;
-		}
-		initDirs(path);
-		preferences.registerOnSharedPreferenceChangeListener(sPrefListener);
 	}
 
 	public static String getEmulatorDir() {
@@ -143,7 +147,7 @@ public class Config {
 		}
 	}
 
-	private static void initDirs(String path) {
+	public static void initDirs(String path) {
 		emulatorDir = path;
 		dataDir = emulatorDir + MIDLET_DATA_DIR;
 		configsDir = emulatorDir + MIDLET_CONFIGS_DIR;

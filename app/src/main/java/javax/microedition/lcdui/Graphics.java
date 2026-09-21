@@ -562,8 +562,12 @@ public class Graphics implements
 	}
 
 	void flush(Image image, int x, int y, int width, int height) {
+		flush(image, x, y, width, height, null);
+	}
+
+	void flush(Image image, int x, int y, int width, int height, Paint paint) {
 		rect.set(x, y, x + width, y + height);
-		canvas.drawBitmap(image.getBitmap(), rect, rect, null);
+		canvas.drawBitmap(image.getBitmap(), rect, rect, paint);
 	}
 
 	@Override

@@ -41,7 +41,8 @@ public class AboutDialogFragment extends DialogFragment {
 				.append(getText(R.string.about_xda))
 				.append(getText(R.string.about_emugen_wiki))
 				.append(getText(R.string.about_crowdin))
-				.append(getText(R.string.about_copyright));
+				.append(getText(R.string.about_copyright))
+				.append(getText(R.string.about_fork));
 		TextView tv = new TextView(getActivity());
 		tv.setText(Html.fromHtml(message.toString()));
 		tv.setTextSize(16);

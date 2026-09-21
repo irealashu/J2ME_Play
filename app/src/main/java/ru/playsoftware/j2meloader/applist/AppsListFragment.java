@@ -59,6 +59,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
@@ -84,6 +85,7 @@ import ru.playsoftware.j2meloader.config.Config;
 import ru.playsoftware.j2meloader.config.ConfigActivity;
 import ru.playsoftware.j2meloader.config.ProfilesActivity;
 import ru.playsoftware.j2meloader.databinding.FragmentAppsListBinding;
+import ru.playsoftware.j2meloader.demos.DemoGamesInstaller;
 import ru.playsoftware.j2meloader.filepicker.FilteredFilePickerFragment;
 import ru.playsoftware.j2meloader.info.AboutDialogFragment;
 import ru.playsoftware.j2meloader.info.HelpDialogFragment;
@@ -91,6 +93,7 @@ import ru.playsoftware.j2meloader.settings.SettingsActivity;
 import ru.playsoftware.j2meloader.util.AppUtils;
 import ru.playsoftware.j2meloader.util.Constants;
 import ru.playsoftware.j2meloader.util.FileUtils;
+import ru.playsoftware.j2meloader.util.ImportExportDialogFragment;
 import ru.playsoftware.j2meloader.util.LogUtils;
 import ru.woesss.j2me.installer.InstallerDialog;
 
@@ -141,6 +144,31 @@ public class AppsListFragment extends ListFragment {
 		registerForContextMenu(getListView());
 		setHasOptionsMenu(true);
 		setListAdapter(adapter);
+
+		adapter.setActionListener(new AppsListAdapter.ActionListener() {
+			@Override
+			public void onPlay(AppItem item) {
+				Config.startApp(requireActivity(), item.getTitle(), item.getPathExt(), false);
+			}
+
+			@Override
+			public void onMenu(AppItem item, View anchor, int position) {
+				showPopupMenu(item, anchor, position);
+			}
+		});
+
+		binding.btnSelectJar.setOnClickListener(v -> binding.floatingActionButton.performClick());
+		binding.btnLoadDemos.setOnClickListener(v -> {
+			binding.btnLoadDemos.setEnabled(false);
+			binding.btnLoadDemos.setText(R.string.converting_wait);
+			DemoGamesInstaller.installDemoGames(requireContext(), appRepository, () -> {
+				if (binding != null) {
+					binding.btnLoadDemos.setEnabled(true);
+					binding.btnLoadDemos.setText(R.string.btn_load_demo_games);
+				}
+			});
+		});
+
 		binding.floatingActionButton.setOnClickListener(v -> {
 			String path = preferences.getString(PREF_LAST_PATH, null);
 			if (path == null) {
@@ -156,6 +184,35 @@ public class AppsListFragment extends ListFragment {
 				e.printStackTrace();
 			}
 		});
+	}
+
+	private void showPopupMenu(AppItem item, View anchor, int position) {
+		PopupMenu popup = new PopupMenu(requireActivity(), anchor);
+		popup.getMenuInflater().inflate(R.menu.context_main, popup.getMenu());
+		if (!ShortcutManagerCompat.isRequestPinShortcutSupported(requireContext())) {
+			popup.getMenu().findItem(R.id.action_context_shortcut).setVisible(false);
+		}
+		if (!new File(item.getPathExt() + Config.MIDLET_RES_FILE).exists()) {
+			popup.getMenu().findItem(R.id.action_context_reinstall).setVisible(false);
+		}
+		popup.setOnMenuItemClickListener(menuItem -> {
+			int itemId = menuItem.getItemId();
+			if (itemId == R.id.action_context_shortcut) {
+				requestAddShortcut(item);
+			} else if (itemId == R.id.action_context_rename) {
+				alertRename(position);
+			} else if (itemId == R.id.action_context_settings) {
+				Config.startApp(requireActivity(), item.getTitle(), item.getPathExt(), true);
+			} else if (itemId == R.id.action_context_reinstall) {
+				InstallerDialog.newInstance(item.getId()).show(getParentFragmentManager(), "installer");
+			} else if (itemId == R.id.action_context_delete) {
+				alertDelete(item);
+			} else {
+				return false;
+			}
+			return true;
+		});
+		popup.show();
 	}
 
 	private void alertDbError(Throwable throwable) {
@@ -350,13 +407,8 @@ public class AppsListFragment extends ListFragment {
 			HelpDialogFragment helpDialogFragment = new HelpDialogFragment();
 			helpDialogFragment.show(getChildFragmentManager(), "help");
 		} else if (itemId == R.id.action_save_log) {
-			try {
-				LogUtils.writeLog();
-				Toast.makeText(activity, R.string.log_saved, Toast.LENGTH_SHORT).show();
-			} catch (IOException e) {
-				e.printStackTrace();
-				Toast.makeText(activity, R.string.error, Toast.LENGTH_SHORT).show();
-			}
+			ImportExportDialogFragment dialog = ImportExportDialogFragment.newInstance();
+			dialog.show(getChildFragmentManager(), "import_export");
 		} else if (itemId == R.id.action_exit_app) {
 			activity.finish();
 		} else if (itemId == R.id.action_sort) {

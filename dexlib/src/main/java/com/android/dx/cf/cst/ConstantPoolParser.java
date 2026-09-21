@@ -42,8 +42,8 @@ import com.android.dx.rop.cst.CstInvokeDynamic;
 import com.android.dx.rop.cst.CstLong;
 import com.android.dx.rop.cst.CstMethodHandle;
 import com.android.dx.rop.cst.CstMethodRef;
-import com.android.dx.rop.cst.CstMethodType;
 import com.android.dx.rop.cst.CstNat;
+import com.android.dx.rop.cst.CstProtoRef;
 import com.android.dx.rop.cst.CstString;
 import com.android.dx.rop.cst.CstType;
 import com.android.dx.rop.cst.StdConstantPool;
@@ -335,56 +335,10 @@ public final class ConstantPoolParser {
                     cst = new CstNat(name, descriptor);
                     break;
                 }
-                case CONSTANT_MethodHandle: {
-                    int kind = bytes.getUnsignedByte(at + 1);
-                    int constantIndex = bytes.getUnsignedShort(at + 2);
-                    Constant ref;
-                    switch (kind) {
-                        case CstMethodHandle.KIND_GETFIELD:
-                        case CstMethodHandle.KIND_GETSTATIC:
-                        case CstMethodHandle.KIND_PUTFIELD:
-                        case CstMethodHandle.KIND_PUTSTATIC:
-                            CstFieldRef field = (CstFieldRef) parse0(constantIndex, wasUtf8);
-                            ref = field;
-                            break;
-                        case CstMethodHandle.KIND_INVOKEVIRTUAL:
-                        case CstMethodHandle.KIND_NEWINVOKESPECIAL:
-                            CstMethodRef method = (CstMethodRef) parse0(constantIndex, wasUtf8);
-                            ref = method;
-                            break;
-                        case CstMethodHandle.KIND_INVOKESTATIC:
-                        case CstMethodHandle.KIND_INVOKESPECIAL:
-                            ref = parse0(constantIndex, wasUtf8);
-                            if (!(ref instanceof CstMethodRef
-                                || ref instanceof CstInterfaceMethodRef)) {
-                              throw new ParseException(
-                                  "Unsupported ref constant type for MethodHandle "
-                                  + ref.getClass());
-                            }
-                            break;
-                        case CstMethodHandle.KIND_INVOKEINTERFACE:
-                            CstInterfaceMethodRef interfaceMethod =
-                                (CstInterfaceMethodRef) parse0(constantIndex, wasUtf8);
-                            ref = interfaceMethod;
-                            break;
-                        default:
-                            throw new ParseException("Unsupported MethodHandle kind: " + kind);
-                    }
-                    cst = CstMethodHandle.make(kind, ref);
-                    break;
-                }
-                case CONSTANT_MethodType: {
-                    int descriptorIndex = bytes.getUnsignedShort(at + 1);
-                    CstString descriptor = (CstString) parse0(descriptorIndex, wasUtf8);
-                    cst = CstMethodType.make(descriptor);
-                    break;
-                }
+                case CONSTANT_MethodHandle:
+                case CONSTANT_MethodType:
                 case CONSTANT_InvokeDynamic: {
-                    int bootstrapMethodIndex = bytes.getUnsignedShort(at + 1);
-                    int natIndex = bytes.getUnsignedShort(at + 3);
-                    CstNat nat = (CstNat) parse0(natIndex, wasUtf8);
-                    cst = CstInvokeDynamic.make(bootstrapMethodIndex, nat);
-                    break;
+                    throw new ParseException("MethodHandle/MethodType/InvokeDynamic constants not supported in J2ME");
                 }
                 default: {
                     throw new ParseException("unknown tag byte: " + Hex.u1(tag));

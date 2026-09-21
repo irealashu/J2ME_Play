@@ -28,6 +28,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,6 +43,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -56,7 +59,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.core.content.FileProvider;
 import androidx.preference.PreferenceManager;
+
+import ru.playsoftware.j2meloader.util.ImportExportDialogFragment;
 
 import org.acra.ACRA;
 import org.acra.ErrorReporter;
@@ -83,7 +89,11 @@ import io.reactivex.disposables.Disposable;
 import ru.playsoftware.j2meloader.BuildConfig;
 import ru.playsoftware.j2meloader.R;
 import ru.playsoftware.j2meloader.config.Config;
+import ru.playsoftware.j2meloader.config.ProfileModel;
+import ru.playsoftware.j2meloader.config.ProfilesManager;
 import ru.playsoftware.j2meloader.databinding.ActivityMicroBinding;
+import ru.playsoftware.j2meloader.gamepad.GamepadManager;
+import ru.playsoftware.j2meloader.sensor.TiltSensorController;
 import ru.playsoftware.j2meloader.util.Constants;
 import ru.playsoftware.j2meloader.util.LogUtils;
 
@@ -103,6 +113,11 @@ public class MicroActivity extends AppCompatActivity {
 	private int menuKey;
 	private String appPath;
 
+	private GamepadManager gamepadManager;
+	private TiltSensorController tiltSensorController;
+	private Runnable hideScreenshotPreviewRunnable;
+	private long lastBackPressTime = 0;
+
 	public ActivityMicroBinding binding;
 
 	@Override
@@ -115,6 +130,10 @@ public class MicroActivity extends AppCompatActivity {
 		View view = binding.getRoot();
 		setContentView(view);
 		setSupportActionBar(binding.toolbar);
+		ActionBar ab = getSupportActionBar();
+		if (ab != null) {
+			ab.setDisplayHomeAsUpEnabled(true);
+		}
 
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		actionBarEnabled = sp.getBoolean(PREF_TOOLBAR, false);
@@ -184,12 +203,166 @@ public class MicroActivity extends AppCompatActivity {
 		menuKey = microLoader.getMenuKeyCode();
 		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
+		initGamepadAndSensors();
+
 		try {
 			loadMIDlet();
 		} catch (Exception e) {
 			e.printStackTrace();
 			showErrorDialog(e.toString());
 		}
+	}
+
+	private void initGamepadAndSensors() {
+		gamepadManager = new GamepadManager(this, new GamepadManager.KeyEventListener() {
+			@Override
+			public void onSimulatedKeyDown(int midpKeyCode) {
+				if (current instanceof Canvas) {
+					((Canvas) current).postKeyPressed(midpKeyCode);
+				}
+			}
+
+			@Override
+			public void onSimulatedKeyUp(int midpKeyCode) {
+				if (current instanceof Canvas) {
+					((Canvas) current).postKeyReleased(midpKeyCode);
+				}
+			}
+		});
+		gamepadManager.setGamepadListener(new GamepadManager.GamepadListener() {
+			@Override
+			public void onControllerConnected(String controllerName) {
+				Toast.makeText(MicroActivity.this,
+						getString(R.string.gamepad_connected, controllerName),
+						Toast.LENGTH_LONG).show();
+			}
+
+			@Override
+			public void onControllerDisconnected(String controllerName) {
+				Toast.makeText(MicroActivity.this,
+						getString(R.string.gamepad_disconnected, controllerName),
+						Toast.LENGTH_SHORT).show();
+			}
+		});
+		gamepadManager.register();
+
+		tiltSensorController = new TiltSensorController(this, new GamepadManager.KeyEventListener() {
+			@Override
+			public void onSimulatedKeyDown(int midpKeyCode) {
+				if (current instanceof Canvas) {
+					((Canvas) current).postKeyPressed(midpKeyCode);
+				}
+			}
+
+			@Override
+			public void onSimulatedKeyUp(int midpKeyCode) {
+				if (current instanceof Canvas) {
+					((Canvas) current).postKeyReleased(midpKeyCode);
+				}
+			}
+		});
+
+		setupQuickScreenshotFab();
+		setupReturnHomeFab();
+	}
+
+	@SuppressLint("ClickableViewAccessibility")
+	private void setupReturnHomeFab() {
+		binding.fabReturnHome.setOnClickListener(v -> showExitConfirmation());
+		binding.fabReturnHome.setOnTouchListener(new View.OnTouchListener() {
+			private float dX, dY;
+			private float startX, startY;
+			private static final int CLICK_DRAG_TOLERANCE = 10;
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				switch (event.getActionMasked()) {
+					case MotionEvent.ACTION_DOWN:
+						dX = view.getX() - event.getRawX();
+						dY = view.getY() - event.getRawY();
+						startX = event.getRawX();
+						startY = event.getRawY();
+						return true;
+					case MotionEvent.ACTION_MOVE:
+						view.animate()
+								.x(event.getRawX() + dX)
+								.y(event.getRawY() + dY)
+								.setDuration(0)
+								.start();
+						return true;
+					case MotionEvent.ACTION_UP:
+						float diffX = Math.abs(event.getRawX() - startX);
+						float diffY = Math.abs(event.getRawY() - startY);
+						if (diffX < CLICK_DRAG_TOLERANCE && diffY < CLICK_DRAG_TOLERANCE) {
+							view.performClick();
+						}
+						return true;
+					default:
+						return false;
+				}
+			}
+		});
+	}
+
+	@SuppressLint("ClickableViewAccessibility")
+	private void setupQuickScreenshotFab() {
+		binding.fabQuickScreenshot.setOnClickListener(v -> takeScreenshot());
+		binding.fabQuickScreenshot.setOnTouchListener(new View.OnTouchListener() {
+			private float dX, dY;
+			private float startX, startY;
+			private static final int CLICK_DRAG_TOLERANCE = 10;
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				switch (event.getActionMasked()) {
+					case MotionEvent.ACTION_DOWN:
+						dX = view.getX() - event.getRawX();
+						dY = view.getY() - event.getRawY();
+						startX = event.getRawX();
+						startY = event.getRawY();
+						return true;
+					case MotionEvent.ACTION_MOVE:
+						view.animate()
+								.x(event.getRawX() + dX)
+								.y(event.getRawY() + dY)
+								.setDuration(0)
+								.start();
+						return true;
+					case MotionEvent.ACTION_UP:
+						float diffX = Math.abs(event.getRawX() - startX);
+						float diffY = Math.abs(event.getRawY() - startY);
+						if (diffX < CLICK_DRAG_TOLERANCE && diffY < CLICK_DRAG_TOLERANCE) {
+							view.performClick();
+						}
+						return true;
+					default:
+						return false;
+				}
+			}
+		});
+	}
+
+	@Override
+	public boolean onGenericMotionEvent(MotionEvent event) {
+		if (gamepadManager != null && gamepadManager.handleGenericMotionEvent(event)) {
+			return true;
+		}
+		return super.onGenericMotionEvent(event);
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (gamepadManager != null) {
+			gamepadManager.unregister();
+		}
+		if (tiltSensorController != null) {
+			tiltSensorController.setEnabled(false);
+		}
+		if (hideScreenshotPreviewRunnable != null && binding != null) {
+			binding.getRoot().removeCallbacks(hideScreenshotPreviewRunnable);
+		}
+		binding = null;
+		super.onDestroy();
 	}
 
 	public void lockNightMode() {
@@ -406,6 +579,10 @@ public class MicroActivity extends AppCompatActivity {
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if ((keyCode == menuKey || keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU)
 				&& (event.getFlags() & (KeyEvent.FLAG_LONG_PRESS | KeyEvent.FLAG_CANCELED)) == 0) {
+			if (keyCode == KeyEvent.KEYCODE_BACK) {
+				handleBackNavigation();
+				return true;
+			}
 			openOptionsMenu();
 			return true;
 		}
@@ -414,7 +591,18 @@ public class MicroActivity extends AppCompatActivity {
 
 	@Override
 	public void onBackPressed() {
-		// Intentionally overridden by empty due to support for back-key remapping.
+		handleBackNavigation();
+	}
+
+	private void handleBackNavigation() {
+		long currentTime = System.currentTimeMillis();
+		if (currentTime - lastBackPressTime < 2500) {
+			hideSoftInput();
+			MidletThread.destroyApp();
+		} else {
+			lastBackPressTime = currentTime;
+			Toast.makeText(this, R.string.press_back_again_to_exit, Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override
@@ -455,10 +643,14 @@ public class MicroActivity extends AppCompatActivity {
 	@Override
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.action_exit_midlet) {
+		if (id == android.R.id.home) {
 			showExitConfirmation();
+			return true;
+		} else if (id == R.id.action_exit_midlet) {
+			showExitConfirmation();
+			return true;
 		} else if (id == R.id.action_save_log) {
-			saveLog();
+			ImportExportDialogFragment.newInstance().show(getSupportFragmentManager(), "import_export");
 		} else if (id == R.id.action_lock_orientation) {
 			if (item.isChecked()) {
 				VirtualKeyboard vk = ContextHolder.getVk();
@@ -469,6 +661,31 @@ public class MicroActivity extends AppCompatActivity {
 				item.setChecked(true);
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 			}
+			ProfileModel p = microLoader.getParams();
+			if (p != null) {
+				p.orientation = item.isChecked() ? ORIENTATION_PORTRAIT : microLoader.getOrientation();
+				ProfilesManager.saveConfig(p);
+			}
+		} else if (id == R.id.action_quick_capture_toggle) {
+			boolean newState = !item.isChecked();
+			item.setChecked(newState);
+			binding.fabQuickScreenshot.setVisibility(newState ? View.VISIBLE : View.GONE);
+			Toast.makeText(this, newState ? R.string.quick_screenshot_toggle : R.string.not_saved_exists, Toast.LENGTH_SHORT).show();
+		} else if (id == R.id.action_tilt_controls) {
+			if (tiltSensorController == null || !tiltSensorController.isSensorAvailable()) {
+				Toast.makeText(this, R.string.tilt_sensor_unavailable, Toast.LENGTH_SHORT).show();
+				item.setChecked(false);
+			} else {
+				boolean newState = !item.isChecked();
+				item.setChecked(newState);
+				tiltSensorController.setEnabled(newState);
+				Toast.makeText(this, newState ? R.string.tilt_controls_enabled : R.string.tilt_controls_disabled, Toast.LENGTH_SHORT).show();
+			}
+		} else if (id == R.id.action_tilt_calibrate) {
+			if (tiltSensorController != null) {
+				tiltSensorController.calibrate();
+				Toast.makeText(this, R.string.tilt_calibrated, Toast.LENGTH_SHORT).show();
+			}
 		} else if (id == R.id.action_ime_keyboard) {
 			inputMethodManager.toggleSoftInputFromWindow(binding.displayableContainer.getWindowToken(),
 					InputMethodManager.SHOW_FORCED, 0);
@@ -476,6 +693,18 @@ public class MicroActivity extends AppCompatActivity {
 			takeScreenshot();
 		} else if (id == R.id.action_limit_fps) {
 			showLimitFpsDialog();
+		} else if (id == R.id.action_motion_smoothing) {
+			int currentMode = Canvas.getFrameBlending();
+			int nextMode = (currentMode + 1) % 4;
+			Canvas.setFrameBlending(nextMode);
+			ProfileModel p = microLoader.getParams();
+			if (p != null) {
+				p.frameBlending = nextMode;
+				ProfilesManager.saveConfig(p);
+			}
+			String[] names = getResources().getStringArray(R.array.pref_frame_blending_entries);
+			String name = nextMode < names.length ? names[nextMode] : String.valueOf(nextMode);
+			Toast.makeText(this, getString(R.string.motion_smoothing_toast, name), Toast.LENGTH_SHORT).show();
 		} else if (ContextHolder.getVk() != null) {
 			// Handled only when virtual keyboard is enabled
 			handleVkOptions(id);
@@ -504,15 +733,22 @@ public class MicroActivity extends AppCompatActivity {
 
 	@SuppressLint("CheckResult")
 	private void takeScreenshot() {
+		// Shutter flash effect
+		binding.flashOverlay.setVisibility(View.VISIBLE);
+		binding.flashOverlay.setAlpha(0.85f);
+		binding.flashOverlay.animate().alpha(0f).setDuration(220).withEndAction(() -> {
+			binding.flashOverlay.setVisibility(View.GONE);
+		}).start();
+		ContextHolder.vibrate(40);
+
 		microLoader.takeScreenshot((Canvas) current, new SingleObserver<String>() {
 			@Override
 			public void onSubscribe(@NonNull Disposable d) {
 			}
 
 			@Override
-			public void onSuccess(@NonNull String s) {
-				Toast.makeText(MicroActivity.this, getString(R.string.screenshot_saved)
-						+ " " + s, Toast.LENGTH_LONG).show();
+			public void onSuccess(@NonNull String filePath) {
+				showScreenshotPreview(filePath);
 			}
 
 			@Override
@@ -521,6 +757,67 @@ public class MicroActivity extends AppCompatActivity {
 				Toast.makeText(MicroActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
 			}
 		});
+	}
+
+	private void showScreenshotPreview(String filePath) {
+		File file = new File(filePath);
+		if (!file.exists()) {
+			Toast.makeText(this, getString(R.string.screenshot_saved) + " " + filePath, Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		try {
+			Bitmap thumb = BitmapFactory.decodeFile(filePath);
+			if (thumb != null) {
+				binding.screenshotThumb.setImageBitmap(thumb);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		binding.screenshotPathText.setText(file.getName());
+
+		Uri fileUri;
+		try {
+			fileUri = FileProvider.getUriForFile(this, getPackageName() + ".provider", file);
+		} catch (Exception e) {
+			fileUri = Uri.fromFile(file);
+		}
+
+		final Uri finalUri = fileUri;
+		binding.btnShareScreenshot.setOnClickListener(v -> {
+			Intent shareIntent = new Intent(Intent.ACTION_SEND);
+			shareIntent.setType("image/png");
+			shareIntent.putExtra(Intent.EXTRA_STREAM, finalUri);
+			shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+			startActivity(Intent.createChooser(shareIntent, getString(R.string.screenshot_share)));
+		});
+
+		binding.btnOpenScreenshot.setOnClickListener(v -> {
+			Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+			viewIntent.setDataAndType(finalUri, "image/png");
+			viewIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+			try {
+				startActivity(viewIntent);
+			} catch (Exception ex) {
+				Toast.makeText(MicroActivity.this, filePath, Toast.LENGTH_LONG).show();
+			}
+		});
+
+		if (hideScreenshotPreviewRunnable != null) {
+			binding.getRoot().removeCallbacks(hideScreenshotPreviewRunnable);
+		}
+
+		binding.screenshotPreviewCard.setAlpha(0f);
+		binding.screenshotPreviewCard.setTranslationY(60f);
+		binding.screenshotPreviewCard.setVisibility(View.VISIBLE);
+		binding.screenshotPreviewCard.animate().alpha(1f).translationY(0f).setDuration(250).start();
+
+		hideScreenshotPreviewRunnable = () -> {
+			binding.screenshotPreviewCard.animate().alpha(0f).translationY(60f).setDuration(250)
+					.withEndAction(() -> binding.screenshotPreviewCard.setVisibility(View.GONE)).start();
+		};
+		binding.getRoot().postDelayed(hideScreenshotPreviewRunnable, 4500);
 	}
 
 	private void saveLog() {
@@ -572,10 +869,19 @@ public class MicroActivity extends AppCompatActivity {
 					vk.saveScreenParams();
 				}
 				vk.onLayoutChanged(VirtualKeyboard.TYPE_CUSTOM);
+				ProfileModel p = microLoader.getParams();
+				if (p != null) {
+					ProfilesManager.saveConfig(p);
+				}
 			});
 		} else {
-			dialog.setButton(dialog.BUTTON_POSITIVE, getText(android.R.string.yes), (d, w) ->
-					ContextHolder.getVk().onLayoutChanged(VirtualKeyboard.TYPE_CUSTOM));
+			dialog.setButton(dialog.BUTTON_POSITIVE, getText(android.R.string.yes), (d, w) -> {
+				ContextHolder.getVk().onLayoutChanged(VirtualKeyboard.TYPE_CUSTOM);
+				ProfileModel p = microLoader.getParams();
+				if (p != null) {
+					ProfilesManager.saveConfig(p);
+				}
+			});
 		}
 		dialog.show();
 	}
@@ -698,12 +1004,6 @@ public class MicroActivity extends AppCompatActivity {
 				binding.displayableContainer.addView(next.getDisplayableView());
 			}
 		}
-	}
-
-	@Override
-	protected void onDestroy() {
-		binding = null;
-		super.onDestroy();
 	}
 
 	@Override

@@ -20,6 +20,26 @@ System requirements: Android 4.0+
 <a href="https://f-droid.org/app/ru.playsoftware.j2meloader">
 <img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="75"></a>
 
+## Features
+
+- **High Compatibility**: Supports most 2D and 3D J2ME games, including Mascot Capsule 3D implementations.
+- **Complete Application Data Import / Export**:
+  - Full backup and restore of all installed games, RMS save states, high scores, per-game configurations, and virtual keyboard profiles.
+  - Export to a single ZIP archive to device storage (via Storage Access Framework) or share directly to other apps/devices via Android Sharesheet.
+  - Safe, automatic restoration with database synchronization and path-traversal (Zip-Slip) verification.
+- **Enhanced In-Game Navigation & Controls**:
+  - Quick floating screenshot action button (draggable, toggleable).
+  - Double-tap back protection to prevent accidental game exits.
+  - Quick return to home / game library from in-game menu.
+  - Screen orientation lock toggle directly inside running MIDlets.
+- **Custom Graphics Shaders & Display Options**:
+  - Motion smoothing and OLED vibrant color boost post-processing shaders.
+  - Configurable scaling filters, immediate processing mode, and custom resolutions.
+- **Built-in Demo Games Package**:
+  - Quick-start demo game installation for instant testing of retro classic games.
+- **Customizable Virtual Controls**:
+  - Flexible on-screen touch keyboard with customizable button layout, haptics, and sizing.
+
 ## Compatibility
 [List of the tested Java Games (Touchscreen)](https://github.com/nikita36078/J2ME-Loader/wiki/List-of-Tested-Java-Games-(Touchscreen))  
 [List of the tested Java Games (Non Touchscreen)](https://github.com/nikita36078/J2ME-Loader/wiki/List-of-Tested-Java-Games-(Non-Touchscreen))  
@@ -36,6 +56,9 @@ System requirements: Android 4.0+
 * For more screenshots check out the [wiki](https://emulation.gametechwiki.com/index.php/J2ME_Loader#Screenshots)
 
 ## License
-> Copyright 2017-2024 Nikita Shakarun.
+> Copyright 2017-2024 Nikita Shakarun.  
+> Fork By: Ashutosh Singh Copyright 2026.  
+> Github: [https://github.com/irealashu](https://github.com/irealashu)  
+>  
 > Licensed under the [Apache License, Version 2.0.](http://www.apache.org/licenses/LICENSE-2.0)  
 > (See the [LICENSE](https://github.com/nikita36078/J2ME-Loader/blob/master/LICENSE) file for the whole license text.)

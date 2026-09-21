@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <!-- Glow circle background -->
+    <path
+        android:pathData="M60,10 A50,50 0 1,0 60,110 A50,50 0 1,0 60,10"
+        android:fillColor="#1A4F46E5" />
+
+    <!-- Handheld Body -->
+    <path
+        android:pathData="M24,40 C24,34 28,30 34,30 L86,30 C92,30 96,34 96,40 L96,80 C96,86 92,90 86,90 L34,90 C28,90 24,86 24,80 Z"
+        android:fillColor="#312E81" />
+    <path
+        android:pathData="M26,42 C26,37 30,33 35,33 L85,33 C90,33 94,37 94,42 L94,78 C94,83 90,87 85,87 L35,87 C30,87 26,83 26,78 Z"
+        android:fillColor="#4338CA" />
+
+    <!-- Screen Bezel & Screen -->
+    <path
+        android:pathData="M42,38 L78,38 C80,38 82,40 82,42 L82,78 C82,80 80,82 78,82 L42,82 C40,82 38,80 38,78 L38,42 C38,40 40,38 42,38 Z"
+        android:fillColor="#0F172A" />
+    <path
+        android:pathData="M44,41 L76,41 C77,41 78,42 78,43 L78,77 C78,78 77,79 76,79 L44,79 C43,79 42,78 42,77 L42,43 C42,42 43,41 44,41 Z"
+        android:fillColor="#0284C7" />
+
+    <!-- Pixel Art on screen -->
+    <path
+        android:pathData="M52,55 L68,55 L68,67 C68,70 65,72 60,72 C55,72 52,70 52,67 Z"
+        android:fillColor="#FFFFFF" />
+    <path
+        android:pathData="M68,57 L72,57 C73.5,57 74,58 74,60 C74,62 73.5,63 72,63 L68,63 Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- D-Pad Left Side -->
+    <path
+        android:pathData="M30,56 L34,56 L34,52 L36,52 L36,56 L40,56 L40,58 L36,58 L36,62 L34,62 L34,58 L30,58 Z"
+        android:fillColor="#38BDF8" />
+
+    <!-- Buttons Right Side -->
+    <path
+        android:pathData="M85,51 A3,3 0 1,0 85,57 A3,3 0 1,0 85,51"
+        android:fillColor="#F43F5E" />
+    <path
+        android:pathData="M89,57 A3,3 0 1,0 89,63 A3,3 0 1,0 89,57"
+        android:fillColor="#10B981" />
+    <path
+        android:pathData="M85,63 A3,3 0 1,0 85,69 A3,3 0 1,0 85,63"
+        android:fillColor="#F59E0B" />
+</vector>

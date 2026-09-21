@@ -174,6 +174,16 @@ public class MicroLoader {
 
 	MIDlet loadMIDlet(String mainClass) throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, NoSuchMethodException, InvocationTargetException, IOException {
+		try {
+			Class<?> directClass = Class.forName(mainClass);
+			if (MIDlet.class.isAssignableFrom(directClass)) {
+				AppClassLoader.setDataDir(appDir);
+				Constructor<?> init = directClass.getDeclaredConstructor();
+				init.setAccessible(true);
+				return (MIDlet) init.newInstance();
+			}
+		} catch (Throwable ignored) {
+		}
 		if (BuildConfig.FULL_EMULATOR) {
 			File dexSource = new File(appDir, Config.MIDLET_DEX_FILE);
 			File codeCacheDir = ContextCompat.getCodeCacheDir(context);
@@ -265,6 +275,7 @@ public class MicroLoader {
 			Canvas.setBackgroundColor(params.screenBackgroundColor);
 			Canvas.setScale(params.screenGravity, params.screenScaleType, params.screenScaleRatio);
 			Canvas.setFilterBitmap(params.screenFilter);
+			Canvas.setFrameBlending(params.frameBlending);
 			EventQueue.setImmediate(params.immediateMode);
 			Canvas.setGraphicsMode(params.graphicsMode, params.parallelRedrawScreen);
 			ShaderInfo shader = params.shader;
@@ -318,5 +329,9 @@ public class MicroLoader {
 			return KeyEvent.KEYCODE_BACK;
 		}
 		return mappings.keyAt(i);
+	}
+
+	public ProfileModel getParams() {
+		return params;
 	}
 }

@@ -25,6 +25,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api 'com.jakewharton.android.repackaged:dalvik-dx:16.0.1'
     implementation 'net.lingala.zip4j:zip4j:2.10.0'
     implementation 'org.ow2.asm:asm:9.8'
 }

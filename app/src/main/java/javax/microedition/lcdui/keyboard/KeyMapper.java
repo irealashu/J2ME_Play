@@ -219,8 +219,22 @@ public class KeyMapper {
 		map.append(KeyEvent.KEYCODE_DPAD_DOWN, KEY_DOWN);
 		map.append(KeyEvent.KEYCODE_DPAD_LEFT, KEY_LEFT);
 		map.append(KeyEvent.KEYCODE_DPAD_RIGHT, KEY_RIGHT);
+		map.append(KeyEvent.KEYCODE_DPAD_CENTER, KEY_FIRE);
 		map.append(KeyEvent.KEYCODE_ENTER, KEY_FIRE);
 		map.append(KeyEvent.KEYCODE_DEL, KEY_CLEAR);
+
+		// Bluetooth & USB Gamepad Auto-Mapping
+		map.append(KeyEvent.KEYCODE_BUTTON_A, KEY_FIRE);
+		map.append(KeyEvent.KEYCODE_BUTTON_B, KEY_SOFT_RIGHT);
+		map.append(KeyEvent.KEYCODE_BUTTON_X, KEY_SOFT_LEFT);
+		map.append(KeyEvent.KEYCODE_BUTTON_Y, KEY_NUM9);
+		map.append(KeyEvent.KEYCODE_BUTTON_L1, KEY_STAR);
+		map.append(KeyEvent.KEYCODE_BUTTON_R1, KEY_POUND);
+		map.append(KeyEvent.KEYCODE_BUTTON_L2, KEY_NUM1);
+		map.append(KeyEvent.KEYCODE_BUTTON_R2, KEY_NUM3);
+		map.append(KeyEvent.KEYCODE_BUTTON_START, KEY_FIRE);
+		map.append(KeyEvent.KEYCODE_BUTTON_SELECT, KEY_OPTIONS_MENU);
+		map.append(KeyEvent.KEYCODE_BUTTON_MODE, KEY_OPTIONS_MENU);
 		return map;
 	}
 }

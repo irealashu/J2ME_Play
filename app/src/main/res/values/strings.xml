@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">J2ME Play</string>
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
@@ -12,7 +13,8 @@
     <string name="search">Search</string>
     <string name="licenses">Licenses</string>
     <string name="profiles">Profiles</string>
-    <string name="save_log">Save log</string>
+    <string name="save_log">Import/Export</string>
+    <string name="action_import_export">Import/Export</string>
     <string name="about_message">This app allows you to launch J2ME apps and games on Android. It supports most 2D and 3D games (including Mascot Capsule 3D ones).&lt;BR></string>
     <string name="help_message">&#8226; Enabling filtering in some cases can greatly reduce performance. Disable this option if game is too slow.&lt;BR>&#8226; Image flickering issues can be fixed by enabling the "Immediate processing mode" option.</string>
     <string name="about_email" translatable="false">&lt;BR>Email: &lt;a href="mailto:j2me.loader@mail.ru">j2me.loader@mail.ru&lt;/a></string>
@@ -22,6 +24,7 @@
     <string name="about_xda" translatable="false">&lt;BR>XDA: &lt;a href="https://forum.xda-developers.com/android/apps-games/app-j2me-loader-t3777889">forum.xda-developers.com/android/apps-games/app-j2me-loader-t3777889&lt;/a></string>
     <string name="about_crowdin" translatable="false">&lt;BR>Crowdin(translation): &lt;a href="https://crowdin.com/project/j2me-loader">crowdin.com/project/j2me-loader&lt;/a></string>
     <string name="about_copyright" translatable="false">&lt;BR>&lt;BR>Copyright 2017-2024 Nikita Shakarun</string>
+    <string name="about_fork" translatable="false">&lt;BR>&lt;BR>Fork By: Ashutosh Singh Copyright 2026.&lt;BR>Github: &lt;a href="https://github.com/irealashu">https://github.com/irealashu&lt;/a></string>
     <string name="author">Author: </string>
     <string name="version">Version: </string>
     <string name="no_data_for_display">No data</string>
@@ -179,7 +182,7 @@
 
     <string name="pref_theme_auto_battery">Auto, by Battery Saver</string>
     <string name="pref_theme_auto_time">Auto, by time of day</string>
-    <string name="pref_theme_default" translatable="false">light</string>
+    <string name="pref_theme_default" translatable="false">dark</string>
     <string name="pref_theme_light">Light</string>
     <string name="pref_theme_night">Dark</string>
     <string name="pref_theme_system">Follow system settings</string>
@@ -258,4 +261,94 @@
     <string name="default_label">"%s (default)"</string>
     <string name="not_saved_exists">Already exists</string>
     <string name="alert_rewrite_profile">A profile named \"%1$s\" already exists.\nDo you want to overwrite it?</string>
+
+    <string name="play">Play</string>
+    <string name="install_game">Install Game</string>
+    <string name="empty_games_title">No Java Games Installed</string>
+    <string name="empty_games_subtitle">Select a .JAR or .JAD file to install, or load built-in demo games to test the emulator!</string>
+    <string name="btn_select_jar">Install .JAR / .JAD</string>
+    <string name="btn_load_demo_games">Load Demo Games</string>
+    <string name="demo_games_installed">Demo games installed successfully!</string>
+    <string name="game_options">Game Options</string>
+    <string name="filter_all">All</string>
+    <string name="filter_3d">3D (M3G)</string>
+    <string name="configure_game">Configure</string>
+    <string name="quick_play">Launch</string>
+
+    <!-- CRT / LCD Shaders & Profiles -->
+    <string name="crt_lcd_shaders">Display Shaders (CRT / LCD)</string>
+    <string name="shader_crt_scanlines">CRT Scanlines &amp; Curvature</string>
+    <string name="shader_lcd_grid">Retro LCD Subpixel Grid</string>
+    <string name="shader_monochrome_green">Monochrome Nokia Green</string>
+    <string name="shader_amber_crt">Amber Phosphor CRT</string>
+    <string name="shader_quick_switch">Display Filter / Shader</string>
+
+    <!-- Bluetooth & USB Gamepad Auto-Mapping -->
+    <string name="gamepad_connected">🎮 Controller Connected: %1$s (Auto-mapped)</string>
+    <string name="gamepad_disconnected">🎮 Controller Disconnected: %1$s</string>
+    <string name="gamepad_detected_banner">🎮 Auto-Mapped Controller: %1$s</string>
+    <string name="gamepad_settings_title">Gamepad &amp; Controller</string>
+
+    <!-- Accelerometer / Gyroscope Tilt Controls -->
+    <string name="action_tilt_controls">Tilt Motion Steering (Sensor)</string>
+    <string name="tilt_controls_enabled">Tilt Motion Controls Enabled</string>
+    <string name="tilt_controls_disabled">Tilt Motion Controls Disabled</string>
+    <string name="action_tilt_calibrate">Calibrate Tilt Neutral Position</string>
+    <string name="tilt_calibrated">Tilt Neutral Position Calibrated!</string>
+    <string name="tilt_sensor_unavailable">Motion sensor (Accelerometer) not available on this device</string>
+
+    <!-- Built-in Instant Screen Capture -->
+    <string name="screenshot_saved_title">Screenshot Captured</string>
+    <string name="screenshot_view">View</string>
+    <string name="screenshot_share">Share</string>
+    <string name="quick_screenshot_toggle">Quick Screenshot Button</string>
+    <string name="quick_screenshot_desc">Tap to take instant screenshot</string>
+
+    <!-- Motion Smoothing & Frame Blending -->
+    <string name="pref_frame_blending_title">Motion Smoothing / Frame Blending</string>
+    <string name="motion_smoothing_off">Disabled (Sharp Pixel Snapping)</string>
+    <string name="motion_smoothing_subtle">Subtle Smoothing (16% Blend)</string>
+    <string name="motion_smoothing_balanced">Balanced 60Hz Motion (30% Blend)</string>
+    <string name="motion_smoothing_high">High Phosphor Persistence (45% Blend)</string>
+    <string name="motion_smoothing_toast">Motion Smoothing: %1$s</string>
+    <string name="action_motion_smoothing">Motion Smoothing (Frame Blend)</string>
+
+    <string-array name="pref_frame_blending_entries">
+        <item>@string/motion_smoothing_off</item>
+        <item>@string/motion_smoothing_subtle</item>
+        <item>@string/motion_smoothing_balanced</item>
+        <item>@string/motion_smoothing_high</item>
+    </string-array>
+
+    <!-- Enhanced Shaders -->
+    <string name="shader_motion_smoothing">Anti-Aliased Motion Smoothing</string>
+    <string name="shader_vibrant_retro">Vibrant OLED Color &amp; Contrast Boost</string>
+
+    <!-- In-Game Exit & Return to Home Navigation -->
+    <string name="return_to_home">Return to Games</string>
+    <string name="press_back_again_to_exit">Press Back again to exit to Home screen</string>
+
+    <!-- Complete Data Import / Export Backup -->
+    <string name="import_export_title">Import / Export Complete Data</string>
+    <string name="import_export_subtitle">Backup or restore complete application data with all loaded games and their current states.</string>
+    <string name="export_card_title">Export Complete Backup</string>
+    <string name="export_card_desc">Packages all loaded games, save states, high scores, configurations, and profiles into a complete ZIP archive.</string>
+    <string name="import_card_title">Import Complete Backup</string>
+    <string name="import_card_desc">Restore all games, save states, and settings from a previously exported backup archive.</string>
+    <string name="btn_export_save">Save to Storage</string>
+    <string name="btn_export_share">Share Backup</string>
+    <string name="btn_import_select">Select Backup File (.zip)</string>
+    <string name="exporting_progress">Packaging games and save states…</string>
+    <string name="importing_progress">Restoring games and save states…</string>
+    <string name="export_success_title">Backup Exported Successfully</string>
+    <string name="export_success_msg">%1$d loaded games and %2$d save states were packaged into backup archive.</string>
+    <string name="import_success_title">Backup Restored Successfully</string>
+    <string name="import_success_msg">Successfully restored %1$d loaded games and %2$d save states into the emulator.</string>
+    <string name="import_confirm_title">Confirm Complete Data Restore</string>
+    <string name="import_confirm_msg">This will import all loaded games, save states, and configurations from the selected backup into your emulator. Do you want to proceed?</string>
+    <string name="import_data">Restore</string>
+    <string name="import_in_game_warning">Restoring backup data will close the current game and return to the main screen. Proceed?</string>
+    <string name="share_backup">Share Backup File</string>
+    <string name="status_current_data">%1$d Loaded Games • %2$d Save States</string>
+    <string name="no_games_or_states">No loaded games or save states found to export.</string>
 </resources>

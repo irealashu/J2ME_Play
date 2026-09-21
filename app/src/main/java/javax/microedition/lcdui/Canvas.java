@@ -133,6 +133,11 @@ public abstract class Canvas extends Displayable {
 	private static boolean screenshotRawMode;
 	private static int scaleType;
 	private static int screenGravity;
+	public static final int FRAME_BLENDING_OFF = 0;
+	public static final int FRAME_BLENDING_SUBTLE = 1;
+	public static final int FRAME_BLENDING_BALANCED = 2;
+	public static final int FRAME_BLENDING_HIGH = 3;
+	private static int frameBlending = FRAME_BLENDING_OFF;
 
 	private final Object bufferLock = new Object();
 	private final Object surfaceLock = new Object();
@@ -140,6 +145,7 @@ public abstract class Canvas extends Displayable {
 	private final SoftBar softBar = new SoftBar();
 	private final CanvasWrapper canvasWrapper = new CanvasWrapper(filter);
 	private final RectF virtualScreen = new RectF();
+	private final Paint blendPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
 	protected int width, height;
 	protected int maxHeight;
@@ -183,6 +189,27 @@ public abstract class Canvas extends Displayable {
 
 	public static void setShaderFilter(ShaderInfo shader) {
 		Canvas.shaderFilter = shader;
+	}
+
+	public static void setFrameBlending(int frameBlending) {
+		Canvas.frameBlending = frameBlending;
+	}
+
+	public static int getFrameBlending() {
+		return Canvas.frameBlending;
+	}
+
+	private int getBlendAlpha() {
+		switch (frameBlending) {
+			case FRAME_BLENDING_SUBTLE:
+				return 215;
+			case FRAME_BLENDING_BALANCED:
+				return 180;
+			case FRAME_BLENDING_HIGH:
+				return 140;
+			default:
+				return 255;
+		}
 	}
 
 	public static void setScale(int screenGravity, int scaleType, int scaleRatio) {
@@ -635,7 +662,12 @@ public abstract class Canvas extends Displayable {
 			return;
 		}
 		synchronized (bufferLock) {
-			offscreenCopy.getSingleGraphics().flush(image, x, y, width, height);
+			if (frameBlending > 0) {
+				blendPaint.setAlpha(getBlendAlpha());
+				offscreenCopy.getSingleGraphics().flush(image, x, y, width, height, blendPaint);
+			} else {
+				offscreenCopy.getSingleGraphics().flush(image, x, y, width, height);
+			}
 		}
 		requestFlushToScreen();
 	}
@@ -644,7 +676,12 @@ public abstract class Canvas extends Displayable {
 	public void flushBuffer(Image image, int x, int y) {
 		limitFps();
 		synchronized (bufferLock) {
-			image.copyTo(offscreenCopy, x, y);
+			if (frameBlending > 0) {
+				blendPaint.setAlpha(getBlendAlpha());
+				image.copyTo(offscreenCopy, x, y, blendPaint);
+			} else {
+				image.copyTo(offscreenCopy, x, y);
+			}
 		}
 		requestFlushToScreen();
 	}
@@ -925,7 +962,12 @@ public abstract class Canvas extends Displayable {
 				Log.e(TAG, "Error in paint()", e);
 			}
 			synchronized (bufferLock) {
-				offscreen.copyTo(offscreenCopy);
+				if (frameBlending > 0) {
+					blendPaint.setAlpha(getBlendAlpha());
+					offscreen.copyTo(offscreenCopy, blendPaint);
+				} else {
+					offscreen.copyTo(offscreenCopy);
+				}
 			}
 			if (surface == null || !surface.isValid()) {
 				return;

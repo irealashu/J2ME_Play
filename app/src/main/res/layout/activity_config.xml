@@ -254,6 +254,31 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/scale_type_hint" />
 
+            <TextView
+                android:id="@+id/frame_blending_hint"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_config_row"
+                android:gravity="center_vertical"
+                android:text="@string/pref_frame_blending_title"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="?attr/textColorSecondary"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toStartOf="@+id/barrier_screen_config"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/filtering_toggle"
+                app:layout_constraintWidth_min="wrap" />
+
+            <Spinner
+                android:id="@+id/frame_blending_selector"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_config_row"
+                android:entries="@array/pref_frame_blending_entries"
+                android:textColor="?attr/textColorSecondary"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/barrier_screen_config"
+                app:layout_constraintTop_toBottomOf="@+id/filtering_toggle" />
+
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/immediate_processing_toggle"
                 style="@style/SwitchStyle"
@@ -263,7 +288,7 @@
                 android:text="@string/PREF_IMMEDIATE"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/filtering_toggle" />
+                app:layout_constraintTop_toBottomOf="@+id/frame_blending_hint" />
 
             <TextView
                 android:id="@+id/graphical_mode_hint"
@@ -405,7 +430,7 @@
                 android:layout_width="10dp"
                 android:layout_height="match_parent"
                 app:barrierDirection="end"
-                app:constraint_referenced_ids="scale_ratio_hint,select_screen_background_color,screen_orientation_hint,scale_type_hint,graphical_mode_hint,fps_limit_hint,screen_gravity_hint" />
+                app:constraint_referenced_ids="scale_ratio_hint,select_screen_background_color,screen_orientation_hint,scale_type_hint,graphical_mode_hint,fps_limit_hint,screen_gravity_hint,frame_blending_hint" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout><!-- Screen -->

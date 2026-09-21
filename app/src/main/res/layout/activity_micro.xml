@@ -36,4 +36,112 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- Screen Flash Animation Overlay for Capture -->
+    <View
+        android:id="@+id/flash_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:visibility="gone" />
+
+    <!-- Floating Return to Home / Exit Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_return_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/return_to_home"
+        android:src="@drawable/ic_home_white"
+        android:alpha="0.85"
+        app:fabSize="mini"
+        app:backgroundTint="#80000000"
+        app:tint="#FFFFFF" />
+
+    <!-- Draggable / Floating Quick Screenshot Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_quick_screenshot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="80dp"
+        android:contentDescription="@string/take_screenshot"
+        android:src="@drawable/ic_action_screenshot"
+        android:visibility="gone"
+        app:fabSize="mini"
+        app:backgroundTint="?attr/colorPrimary"
+        app:tint="#FFFFFF" />
+
+    <!-- Instant Screenshot Preview Toast/Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/screenshot_preview_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="#212121"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/screenshot_thumb"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="#000000"
+                android:contentDescription="@string/screenshot_saved_title"
+                android:scaleType="centerCrop" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/screenshot_saved_title"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/screenshot_path_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textColor="#B0BEC5"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_share_screenshot"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/screenshot_share"
+                android:textColor="?attr/colorAccent" />
+
+            <Button
+                android:id="@+id/btn_open_screenshot"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/screenshot_view"
+                android:textColor="?attr/colorAccent" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
 </FrameLayout>

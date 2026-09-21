@@ -2,50 +2,39 @@ plugins {
     id 'com.android.application'
 }
 
-def midletArchivesBaseName
-
 android {
     compileSdk COMPILE_SDK
-    ndkVersion NDK_VERSION
     namespace 'ru.playsoftware.j2meloader'
 
     defaultConfig {
         applicationId "ru.playsoftware.j2meloader"
         minSdk MIN_SDK
         targetSdk TARGET_SDK
-        versionCode 101
-        versionName "1.8.2"
+        versionCode 200
+        versionName "2.0"
         resValue 'string', 'app_name', rootProject.name
+        buildConfigField 'boolean', 'FULL_EMULATOR', 'true'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
-        release {
-            if (System.getenv()['BITRISE_IO']) {
-                keyAlias System.getenv('BITRISEIO_ANDROID_KEYSTORE_ALIAS')
-                keyPassword System.getenv('BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD')
-                storeFile rootProject.file(System.getenv('BITRISEIO_ANDROID_KEYSTORE_NAME'))
-                storePassword System.getenv('BITRISEIO_ANDROID_KEYSTORE_PASSWORD')
-            } else {
-                Properties keystoreProps = new Properties()
-                keystoreProps.load(new FileInputStream(rootProject.file("keystore.properties")))
-                keyAlias keystoreProps['keyAlias']
-                keyPassword keystoreProps['keyPassword']
-                storeFile file(keystoreProps['storeFile'])
-                storePassword keystoreProps['storePassword']
-            }
+        debug {
+            storeFile file("${rootDir}/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
         }
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
-            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro', 'proguard-common.pro'
         }
         debug {
-            applicationIdSuffix '.debug'
+            signingConfig signingConfigs.debug
             jniDebuggable true
             multiDexEnabled true
             multiDexKeepProguard file('multidex-config.pro')
@@ -54,48 +43,6 @@ android {
 
     lint {
         disable 'MissingTranslation', 'ExtraTranslation'
-    }
-
-    flavorDimensions 'default'
-    productFlavors {
-        play {
-            buildConfigField 'boolean', 'FULL_EMULATOR', 'true'
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-rules.pro', 'proguard-common.pro'
-            versionNameSuffix "-play"
-        }
-        open {
-            buildConfigField 'boolean', 'FULL_EMULATOR', 'true'
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-rules.pro', 'proguard-common.pro'
-            versionNameSuffix "-open"
-        }
-        fdroid {
-            buildConfigField 'boolean', 'FULL_EMULATOR', 'true'
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-rules.pro', 'proguard-common.pro'
-        }
-        dev {
-            buildConfigField 'boolean', 'FULL_EMULATOR', 'true'
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-rules.pro', 'proguard-common.pro'
-            versionNameSuffix "-dev-" + generateVersionCode()
-        }
-        // variant dimension for create android port from J2ME app source
-        midlet {
-            buildConfigField 'boolean', 'FULL_EMULATOR', 'false'
-            // configure midlet's port project params here, as default it read from app manifest,
-            // placed to 'app/src/midlet/resources/MIDLET-META-INF/MANIFEST.MF'
-            def props = getMidletManifestProperties()
-            def midletName = props.getValue('MIDlet-Name').trim()
-            def apkName = midletName.replaceAll('[/\\\\:*?\"<>|]', '').replace(' ', '_')
-            applicationId "com.example.androidlet.${apkName.toLowerCase()}"
-            versionName = props.getValue('MIDlet-Version')
-            resValue 'string', 'app_name', midletName
-            midletArchivesBaseName = apkName
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-midlet.pro', 'proguard-common.pro'
-        }
     }
 
     bundle {
@@ -116,40 +63,10 @@ android {
         }
     }
 
-    applicationVariants.all {
-        if (buildType.name == 'debug' && flavorName != 'midlet') {
-            resValue 'string', 'app_name', 'JL-Debug'
-        }
-        def baseName = flavorName == 'midlet' ? "${midletArchivesBaseName}-" : "${rootProject.name}-"
-        outputs.all {
-            outputFileName = "${baseName}${versionName}-${dirName}-${buildType.name}.apk"
-                    .replaceAll('--+', '-').replaceAll(' +', '_')
-        }
-    }
-
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
-}
-
-static def generateVersionCode() {
-    def result = "git rev-list HEAD --count".execute().text.trim()
-    return result.toInteger()
-}
-
-def getMidletManifestProperties() {
-    def file = project.file('src/midlet/resources/MIDLET-META-INF/MANIFEST.MF')
-    def mf = new java.util.jar.Manifest()
-    if (file.exists()) {
-        def is = null
-        try {
-            is = new FileInputStream(file)
-            mf.read(is)
-        } finally {
-            if (is != null) is.close()
-        }
-    }
-    return mf.mainAttributes
 }
 
 dependencies {

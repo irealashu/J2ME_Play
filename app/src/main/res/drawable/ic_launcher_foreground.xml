@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Phone / Console Body -->
+    <path
+        android:pathData="M33,23 h42 c4.4,0 8,3.6 8,8 v46 c0,4.4 -3.6,8 -8,8 h-42 c-4.4,0 -8,-3.6 -8,-8 v-46 c0,-4.4 3.6,-8 8,-8 z"
+        android:fillColor="#0F172A" />
+    <path
+        android:pathData="M34,24 h40 c3.8,0 7,3.2 7,7 v44 c0,3.8 -3.2,7 -7,7 h-40 c-3.8,0 -7,-3.2 -7,-7 v-44 c0,-3.8 3.2,-7 7,-7 z"
+        android:fillColor="#1E293B" />
+
+    <!-- Speaker slit -->
+    <path
+        android:pathData="M48,27 h12 c0.6,0 1,0.4 1,1 c0,0.6 -0.4,1 -1,1 h-12 c-0.6,0 -1,-0.4 -1,-1 c0,-0.6 0.4,-1 1,-1 z"
+        android:fillColor="#64748B" />
+
+    <!-- Screen Bezel & Screen -->
+    <path
+        android:pathData="M31,32 h46 c1.1,0 2,0.9 2,2 v25 c0,1.1 -0.9,2 -2,2 h-46 c-1.1,0 -2,-0.9 -2,-2 v-25 c0,-1.1 0.9,-2 2,-2 z"
+        android:fillColor="#090D16" />
+    <path
+        android:pathData="M33,34 h42 c0.5,0 1,0.5 1,1 v21 c0,0.5 -0.5,1 -1,1 h-42 c-0.5,0 -1,-0.5 -1,-1 v-21 c0,-0.5 0.5,-1 1,-1 z"
+        android:fillColor="#0284C7" />
+
+    <!-- Screen Pixel / Retro Coffee Cup & Sparks on Screen -->
+    <!-- Java Steam Waves -->
+    <path
+        android:pathData="M49,38 Q52,35 50,36 Q54,39 52,41"
+        android:strokeColor="#F59E0B"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M54,37 Q57,34 55,36 Q59,38 57,41"
+        android:strokeColor="#EF4444"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000" />
+
+    <!-- Coffee Cup Silhouette -->
+    <path
+        android:pathData="M46,42 h13 v5 c0,2.5 -2,4.5 -4.5,4.5 h-4 c-2.5,0 -4.5,-2 -4.5,-4.5 z"
+        android:fillColor="#FFFFFF" />
+    <path
+        android:pathData="M59,43 h2.5 c1.1,0 2,0.9 2,2 c0,1.1 -0.9,2 -2,2 h-2.5 z"
+        android:fillColor="#FFFFFF" />
+    <!-- Cup Base Plate -->
+    <path
+        android:pathData="M44,53 h17 c0.6,0 1,0.4 1,1 c0,0.6 -0.4,1 -1,1 h-17 c-0.6,0 -1,-0.4 -1,-1 c0,-0.6 0.4,-1 1,-1 z"
+        android:fillColor="#E2E8F0" />
+
+    <!-- D-Pad on Left Keyboard -->
+    <path
+        android:pathData="M37,64 h4 v3 h-4 z"
+        android:fillColor="#38BDF8" />
+    <path
+        android:pathData="M34,67 h10 v4 h-10 z"
+        android:fillColor="#38BDF8" />
+    <path
+        android:pathData="M37,71 h4 v3 h-4 z"
+        android:fillColor="#38BDF8" />
+    <path
+        android:pathData="M38,68 h2 v2 h-2 z"
+        android:fillColor="#0284C7" />
+
+    <!-- Action Buttons on Right Keyboard -->
+    <path
+        android:pathData="M69,65 a2.5,2.5 0 1,0 0.01,0"
+        android:fillColor="#F43F5E" />
+    <path
+        android:pathData="M63,70 a2.5,2.5 0 1,0 0.01,0"
+        android:fillColor="#10B981" />
+    <path
+        android:pathData="M73,71 a2.5,2.5 0 1,0 0.01,0"
+        android:fillColor="#F59E0B" />
+
+    <!-- Center Soft Keys / Menu Buttons -->
+    <path
+        android:pathData="M50,65 h8 c0.5,0 1,0.4 1,1 c0,0.6 -0.5,1 -1,1 h-8 c-0.5,0 -1,-0.4 -1,-1 c0,-0.6 0.5,-1 1,-1 z"
+        android:fillColor="#94A3B8" />
+    <path
+        android:pathData="M51,70 h6 c0.5,0 1,0.4 1,1 c0,0.6 -0.5,1 -1,1 h-6 c-0.5,0 -1,-0.4 -1,-1 c0,-0.6 0.5,-1 1,-1 z"
+        android:fillColor="#64748B" />
+</vector>

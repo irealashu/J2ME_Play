@@ -203,6 +203,17 @@ public class AppRepository implements SharedPreferences.OnSharedPreferenceChange
 		}
 	}
 
+	public void recheckApps() {
+		if (db == null) {
+			initDb(Config.getEmulatorDir());
+			return;
+		}
+		compositeDisposable.add(getAll()
+				.firstElement()
+				.subscribeOn(Schedulers.io())
+				.subscribe(list -> AppUtils.updateDb(this, new ArrayList<>(list)), errorsLiveData::postValue));
+	}
+
 	private static class ErrorObserver implements CompletableObserver {
 		private final MutableLiveData<Throwable> callback;
 

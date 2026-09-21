@@ -204,6 +204,40 @@ public class FileUtils {
 		return "";
 	}
 
+	public static void copyAssetFolder(Context context, String assetSubDir, File targetDir) {
+		if (context == null || targetDir == null) return;
+		try {
+			String[] files = context.getAssets().list(assetSubDir);
+			if (files == null || files.length == 0) return;
+			if (!targetDir.exists()) {
+				//noinspection ResultOfMethodCallIgnored
+				targetDir.mkdirs();
+			}
+			for (String file : files) {
+				File outFile = new File(targetDir, file);
+				if (file.endsWith(".ini") || !outFile.exists() || outFile.length() == 0) {
+					try (InputStream in = context.getAssets().open(assetSubDir + "/" + file);
+						 OutputStream out = new FileOutputStream(outFile)) {
+						byte[] buffer = new byte[4096];
+						int read;
+						while ((read = in.read(buffer)) != -1) {
+							out.write(buffer, 0, read);
+						}
+					} catch (IOException e) {
+						Log.w(TAG, "copyAssetFolder failed for: " + file, e);
+					}
+				}
+			}
+		} catch (IOException e) {
+			Log.e(TAG, "copyAssetFolder error: " + assetSubDir, e);
+		}
+	}
+
+	public static void ensureShaders(Context context, File dir) {
+		File shadersDir = new File(dir, Config.SHADERS_DIR);
+		copyAssetFolder(context, "shaders", shadersDir);
+	}
+
 	public static boolean initWorkDir(File dir) {
 		if ((dir.isDirectory() || dir.mkdirs()) && dir.canWrite()) {
 			//noinspection ResultOfMethodCallIgnored

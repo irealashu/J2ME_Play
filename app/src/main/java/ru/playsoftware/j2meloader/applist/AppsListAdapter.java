@@ -34,10 +34,20 @@ import ru.playsoftware.j2meloader.databinding.ListRowJarBinding;
 
 public class AppsListAdapter extends BaseAdapter implements Filterable {
 
+	public interface ActionListener {
+		void onPlay(AppItem item);
+		void onMenu(AppItem item, View anchor, int position);
+	}
+
 	private List<AppItem> list = new ArrayList<>();
 	private List<AppItem> filteredList = new ArrayList<>();
 	private final AppFilter appFilter = new AppFilter();
 	private CharSequence filterConstraint;
+	private ActionListener actionListener;
+
+	public void setActionListener(ActionListener listener) {
+		this.actionListener = listener;
+	}
 
 	@Override
 	public int getCount() {
@@ -79,6 +89,18 @@ public class AppsListAdapter extends BaseAdapter implements Filterable {
 		holder.binding.author.setText(item.getAuthor());
 		holder.binding.appVersion.setText(item.getVersion());
 
+		holder.binding.btnQuickPlay.setOnClickListener(v -> {
+			if (actionListener != null) {
+				actionListener.onPlay(item);
+			}
+		});
+
+		holder.binding.btnQuickMenu.setOnClickListener(v -> {
+			if (actionListener != null) {
+				actionListener.onMenu(item, v, position);
+			}
+		});
+
 		return view;
 	}
 
@@ -95,8 +117,6 @@ public class AppsListAdapter extends BaseAdapter implements Filterable {
 	private static class ViewHolder {
 		ListRowJarBinding binding;
 
-		// todo неясно, может быть здесь стоит binding очищать на этапе
-		// ondestroy/ondestroyview где используется этот класс
 		private ViewHolder(ListRowJarBinding binding) {
 			this.binding = binding;
 		}
